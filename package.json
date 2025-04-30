@@ -1,0 +1,20 @@
+{
+  "name": "api-crud-alunos",
+  "version": "1.0.0",
+  "description": "API desenvolvida durante a capacitação back-end da Unect Jr. Com o intuito de colocar em prática as principais operações de um Banco de Dados.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js localhost 3333"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
