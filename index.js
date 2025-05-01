@@ -4,9 +4,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-// Importando Model
-const Student = require('./models/Student');
-
 // Midleware para ler JSON
 app.use(
     express.urlencoded({
@@ -15,13 +12,17 @@ app.use(
 );
 app.use(express.json());
 
+// Rotas da API
+const studentRoutes = require('./routes/studentRoutes');
+app.use('/student', studentRoutes);
+
 // Roda o server
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = encodeURIComponent(process.env.DB_PASSWORD);
 
 mongoose
     .connect(
-        `mongodb+srv://${DB_USER}:${DB_PASSWORD}@crud-alunos.og8ztxw.mongodb.net/?retryWrites=true&w=majority&appName=CRUD-Alunos`
+        `mongodb+srv://${DB_USER}:${DB_PASSWORD}@crud-alunos.og8ztxw.mongodb.net/Banco-Alunos?retryWrites=true&w=majority&appName=CRUD-Alunos`
     )
     .then(() => {
         app.listen(3333);
