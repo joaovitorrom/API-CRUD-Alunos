@@ -4,6 +4,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
+// Importando Model
+const Student = require('./models/Student');
+
 // Midleware para ler JSON
 app.use(
     express.urlencoded({
