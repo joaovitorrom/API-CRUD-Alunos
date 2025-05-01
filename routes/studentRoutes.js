@@ -38,4 +38,15 @@ router.post('/', async (req, res) => {
     }
 })
 
+// Consulta de todos alunos cadastrados
+router.get('/', async (req, res) => {
+    try {
+        const students = await Student.find();
+        res.status(200).json(students);
+    } 
+    catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+
 module.exports = router;
