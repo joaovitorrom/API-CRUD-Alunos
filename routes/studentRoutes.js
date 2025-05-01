@@ -49,4 +49,17 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Consulta de um aluno cadastrado através do ID
+router.get('/:id', async (req, res) => {
+    const id  = req.params.id;
+
+    try {
+        const student = await Student.findOne({ _id: id });
+        res.status(200).json(student);
+    } 
+    catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+
 module.exports = router;
