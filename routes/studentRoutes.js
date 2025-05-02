@@ -7,23 +7,8 @@ const Student = require('../models/Student');
 router.post('/', async (req, res) => {
     const { name, age, ra, cpf } = req.body;
 
-    if(!name) {
-        res.status(400).json({error: "O nome do aluno é obrigatório!"});
-        return;
-    }
-
-    if(!age) {
-        res.status(400).json({error: "A idade do aluno é obrigatório!"});
-        return;
-    }
-
-    if(!ra) {
-        res.status(400).json({error: "O ra do aluno é obrigatório!"});
-        return;
-    }
-
-    if(!cpf) {
-        res.status(400).json({error: "O cpf do aluno é obrigatório!"});
+   if (!name || !age || !ra || !cpf) {
+        res.status(422).json({ error: 'Todos os campos (name, age, ra, cpf) são obrigatórios.' })
         return;
     }
 
@@ -35,10 +20,12 @@ router.post('/', async (req, res) => {
     };
 
     try {
-        await Student.create(student);
-        res.status(201).json({ message: "Aluno cadastrado com sucesso!" });
-    } 
-    catch (err) {
+        const newStudent = await Student.create(student);
+        res.status(201).json({
+            message: "Aluno cadastrado com sucesso!",
+            data: newStudent
+        });
+    } catch (err) {
         // Tratamento de erro caso haja tentativa de criar ra e cpf já existentes no BD
         if (err.code === 11000) {
             const field = Object.keys(err.keyValue);
@@ -46,7 +33,7 @@ router.post('/', async (req, res) => {
             return;
         }
 
-        res.status(500).json({ error: err });
+        res.status(500).json({ error: 'Erro interno ao cadastrar aluno.', details: err.message });
     }
 })
 
@@ -56,16 +43,12 @@ router.get('/', async (req, res) => {
 
     try {
         const students = await Student.find(query);
-        
-        if(students.length === 0) {
-            res.status(200).json({ message: "Não há nenhum aluno cadastrado." });
-            return;
-        }
-
-        res.status(200).json(students);
-    } 
-    catch (err) {
-        res.status(500).json({ error: err });
+        res.status(200).json({
+            data: students,
+            count: students.length
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Erro interno ao buscar alunos.', details: err.message });       
     }
 })
 
@@ -78,13 +61,13 @@ router.get('/:id', async (req, res) => {
         
         if(!student) {
             res.status(404).json({ error: "O aluno não foi encontrado!" });
-            return
+            return;
         }
 
-        res.status(200).json(student);
+        res.status(200).json({ data: student });
     } 
     catch (err) {
-        res.status(500).json({ error: err });
+        res.status(500).json({ error: 'Erro interno ao buscar alunos.', details: err.message });
     }
 })
 
@@ -105,15 +88,18 @@ router.patch('/:id', async (req, res) => {
 
         if(updatedStudent.matchedCount == 0) {
             res.status(404).json({ error: "O aluno não foi encontrado!" });
-            return
+            return;
         }
 
         if(updatedStudent.modifiedCount == 0) {
             res.status(200).json({ message: "Nenhuma alteração detectada, dados já cadastrados." });
-            return
+            return;
         }
 
-        res.status(200).json(student);
+        res.status(200).json({
+            message: 'Aluno atualizado com sucesso.',
+            data: student
+        });
     } 
     catch (err) {
         // Tratamento de erro caso haja tentativa de atualizar ra e cpf com dados já existentes no BD
@@ -123,7 +109,7 @@ router.patch('/:id', async (req, res) => {
             return;
         }
 
-        res.status(500).json({ error: err });
+        res.status(500).json({ error: 'Erro interno ao atualizar aluno.', details: err.message });
     }
 })
 
@@ -142,7 +128,7 @@ router.delete('/:id', async (req, res) => {
         await Student.deleteOne({ _id: id });
         res.status(200).json({ message: "Aluno removido com sucesso."});
     } catch(err) {
-        res.status(500).json({ error: err});
+        res.status(500).json({ error: 'Erro interno ao remover aluno.', details: err.message });
     }
 })
 
