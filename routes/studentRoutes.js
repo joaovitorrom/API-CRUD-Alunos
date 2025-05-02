@@ -52,9 +52,11 @@ router.post('/', async (req, res) => {
 
 // READ - Consulta de todos alunos cadastrados
 router.get('/', async (req, res) => {
-    try {
-        const students = await Student.find();
+    const query = req.query;
 
+    try {
+        const students = await Student.find(query);
+        
         if(students == 0) {
             res.status(404).json({ alert: "Não há nenhum aluno cadastrado." });
             return;
