@@ -3,7 +3,7 @@ const router = require('express').Router();
 // Importando Model
 const Student = require('../models/Student');
 
-// Cadastro de aluno
+// CREATE - Cadastro de aluno
 router.post('/', async (req, res) => {
     const { name, age, ra, cpf } = req.body;
 
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-// Consulta de todos alunos cadastrados
+// READ - Consulta de todos alunos cadastrados
 router.get('/', async (req, res) => {
     try {
         const students = await Student.find();
@@ -49,17 +49,24 @@ router.get('/', async (req, res) => {
     }
 })
 
-// Consulta de um aluno cadastrado através do ID
+// READ - Consulta de um aluno cadastrado através do ID
 router.get('/:id', async (req, res) => {
     const id  = req.params.id;
 
     try {
         const student = await Student.findOne({ _id: id });
+        
+        if(!student) {
+            res.status(422).json({ alert: "O Aluno não encontrado!" });
+            return
+        }
+
         res.status(200).json(student);
     } 
     catch (err) {
         res.status(500).json({ error: err });
     }
 })
+
 
 module.exports = router;
