@@ -57,7 +57,7 @@ router.get('/:id', async (req, res) => {
         const student = await Student.findOne({ _id: id });
         
         if(!student) {
-            res.status(422).json({ alert: "O Aluno não encontrado!" });
+            res.status(422).json({ alert: "O aluno não foi encontrado!" });
             return
         }
 
@@ -67,6 +67,39 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: err });
     }
 })
+
+// UPDATE - atualização parcial de dados
+router.patch('/:id', async (req, res) => {
+    const id  = req.params.id;
+    const { name, age, ra, cpf } = req.body;
+
+    const student = {
+        name,
+        age,
+        ra,
+        cpf
+    };
+
+    try {
+        const updatedStudent = await Student.updateOne({ _id: id}, student);
+
+        if(updatedStudent.matchedCount == 0) {
+            res.status(422).json({ alert: "O aluno não foi encontrado!" });
+            return
+        }
+
+        if(updatedStudent.modifiedCount == 0) {
+            res.status(422).json({ alert: "Dados já cadastrados." });
+            return
+        }
+
+        res.status(200).json(student);
+    } 
+    catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+
 
 
 module.exports = router;
