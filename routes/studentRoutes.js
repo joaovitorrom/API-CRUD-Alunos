@@ -68,7 +68,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-// UPDATE - atualização parcial de dados
+// UPDATE - atualização parcial de dados atráves do ID
 router.patch('/:id', async (req, res) => {
     const id  = req.params.id;
     const { name, age, ra, cpf } = req.body;
@@ -81,7 +81,7 @@ router.patch('/:id', async (req, res) => {
     };
 
     try {
-        const updatedStudent = await Student.updateOne({ _id: id}, student);
+        const updatedStudent = await Student.updateOne({ _id: id }, student);
 
         if(updatedStudent.matchedCount == 0) {
             res.status(422).json({ alert: "O aluno não foi encontrado!" });
@@ -100,6 +100,23 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
+// DELETE - remover registro de aluno do banco de dados atráves do ID
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
 
+    const student = await Student.findOne({ _id: id });
+        
+    if(!student) {
+        res.status(422).json({ alert: "O aluno não foi encontrado!" });
+        return
+    }
+
+    try {
+        await Student.deleteOne({ _id: id });
+        res.status(200).json({ message: "Aluno removido com sucesso."});
+    } catch(err) {
+        res.status(500).json({ error: err});
+    }
+})
 
 module.exports = router;
