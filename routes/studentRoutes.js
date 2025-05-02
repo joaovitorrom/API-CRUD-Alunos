@@ -12,6 +12,11 @@ router.post('/', async (req, res) => {
         return;
     }
 
+    if(!age) {
+        res.status(422).json({error: "A idade do aluno é obrigatório!"});
+        return;
+    }
+
     if(!ra) {
         res.status(422).json({error: "O ra do aluno é obrigatório!"});
         return;
