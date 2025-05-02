@@ -8,22 +8,22 @@ router.post('/', async (req, res) => {
     const { name, age, ra, cpf } = req.body;
 
     if(!name) {
-        res.status(422).json({error: "O nome do aluno é obrigatório!"});
+        res.status(400).json({error: "O nome do aluno é obrigatório!"});
         return;
     }
 
     if(!age) {
-        res.status(422).json({error: "A idade do aluno é obrigatório!"});
+        res.status(400).json({error: "A idade do aluno é obrigatório!"});
         return;
     }
 
     if(!ra) {
-        res.status(422).json({error: "O ra do aluno é obrigatório!"});
+        res.status(400).json({error: "O ra do aluno é obrigatório!"});
         return;
     }
 
     if(!cpf) {
-        res.status(422).json({error: "O cpf do aluno é obrigatório!"});
+        res.status(400).json({error: "O cpf do aluno é obrigatório!"});
         return;
     }
 
@@ -50,15 +50,15 @@ router.post('/', async (req, res) => {
     }
 })
 
-// READ - Consulta de todos alunos cadastrados
+// READ ALL - Consulta de todos alunos cadastrados
 router.get('/', async (req, res) => {
     const query = req.query;
 
     try {
         const students = await Student.find(query);
         
-        if(students == 0) {
-            res.status(404).json({ alert: "Não há nenhum aluno cadastrado." });
+        if(students.length === 0) {
+            res.status(200).json({ message: "Não há nenhum aluno cadastrado." });
             return;
         }
 
@@ -69,7 +69,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-// READ - Consulta de um aluno cadastrado através do ID
+// READ ONE - Consulta de um aluno cadastrado através do ID
 router.get('/:id', async (req, res) => {
     const id  = req.params.id;
 
@@ -77,7 +77,7 @@ router.get('/:id', async (req, res) => {
         const student = await Student.findOne({ _id: id });
         
         if(!student) {
-            res.status(422).json({ alert: "O aluno não foi encontrado!" });
+            res.status(404).json({ error: "O aluno não foi encontrado!" });
             return
         }
 
@@ -104,12 +104,12 @@ router.patch('/:id', async (req, res) => {
         const updatedStudent = await Student.updateOne({ _id: id }, student);
 
         if(updatedStudent.matchedCount == 0) {
-            res.status(422).json({ alert: "O aluno não foi encontrado!" });
+            res.status(404).json({ error: "O aluno não foi encontrado!" });
             return
         }
 
         if(updatedStudent.modifiedCount == 0) {
-            res.status(422).json({ alert: "Dados já cadastrados." });
+            res.status(200).json({ message: "Nenhuma alteração detectada, dados já cadastrados." });
             return
         }
 
@@ -134,7 +134,7 @@ router.delete('/:id', async (req, res) => {
     const student = await Student.findOne({ _id: id });
         
     if(!student) {
-        res.status(422).json({ alert: "O aluno não foi encontrado!" });
+        res.status(404).json({ error: "O aluno não foi encontrado!" });
         return
     }
 
