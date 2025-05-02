@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
         res.status(201).json({ message: "Aluno cadastrado com sucesso!" });
     } 
     catch (err) {
-        // Tratamento de erro caso tentativa de criar ra e cpf já existentes no BD
+        // Tratamento de erro caso haja tentativa de criar ra e cpf já existentes no BD
         if (err.code === 11000) {
             const field = Object.keys(err.keyValue);
             res.status(409).json({ error: `O ${field} já está cadastrado.` });
@@ -116,6 +116,13 @@ router.patch('/:id', async (req, res) => {
         res.status(200).json(student);
     } 
     catch (err) {
+        // Tratamento de erro caso haja tentativa de atualizar ra e cpf com dados já existentes no BD
+        if (err.code === 11000) {
+            const field = Object.keys(err.keyValue);
+            res.status(409).json({ error: `O ${field} já está cadastrado.` });
+            return;
+        }
+
         res.status(500).json({ error: err });
     }
 })
