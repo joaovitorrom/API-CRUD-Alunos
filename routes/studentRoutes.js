@@ -42,6 +42,12 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const students = await Student.find();
+
+        if(students == 0) {
+            res.status(404).json({ alert: "Não há nenhum aluno cadastrado." });
+            return;
+        }
+
         res.status(200).json(students);
     } 
     catch (err) {
