@@ -129,7 +129,7 @@ components:
         name:
           type: string
         age:
-          type: integer
+          type: number
         ra:
           type: string
         cpf:
@@ -155,7 +155,7 @@ components:
         name:
           type: string
         age:
-          type: integer
+          type: number
         ra:
           type: string
         cpf:
