@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  title: API de Alunos
+  version: 1.0.0
+  description: CRUD de alunos com Express, Mongoose e MongoDB Atlas
+
+servers:
+  - url: http://localhost:3333
+    description: Servidor local
+
+paths:
+  /students:
+    get:
+      summary: Lista todos os alunos (opcionalmente filtrados por ra ou name)
+      parameters:
+        - in: query
+          name: ra
+          schema:
+            type: string
+          description: Filtra por RA exato
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Filtra por nome (busca parcial, case‑insensitive)
+      responses:
+        '200':
+          description: Lista de alunos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentsList'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Cadastra um novo aluno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '201':
+          description: Aluno criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /students/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: ID do aluno (MongoDB ObjectId)
+
+    get:
+      summary: Busca um aluno pelo ID
+      responses:
+        '200':
+          description: Aluno encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      summary: Atualiza parcialmente um aluno pelo ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '200':
+          description: Aluno atualizado (ou nenhuma alteração detectada)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Remove um aluno pelo ID
+      responses:
+        '200':
+          description: Aluno removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Aluno removido com sucesso.
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID gerado pelo MongoDB
+        name:
+          type: string
+        age:
+          type: integer
+        ra:
+          type: string
+        cpf:
+          type: string
+        createdAt:
+          type: string
+          description: Timestamp de criação formatado como DD/MM/YYYY HH:mm:ss
+        updatedAt:
+          type: string
+          description: Timestamp de atualização formatado como DD/MM/YYYY HH:mm:ss
+      required:
+        - _id
+        - name
+        - age
+        - ra
+        - cpf
+        - createdAt
+        - updatedAt
+
+    StudentInput:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        ra:
+          type: string
+        cpf:
+          type: string
+      required:
+        - name
+        - age
+        - ra
+        - cpf
+
+    StudentResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Student'
+
+    StudentsList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Student'
+        count:
+          type: integer
+          description: Número de itens retornados
+
+  responses:
+    NotFoundError:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Aluno não encontrado.
+    ConflictError:
+      description: Conflito de dados (ra ou cpf duplicado)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: O ra já está cadastrado.
+    ValidationError:
+      description: Erro de validação de entrada
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Todos os campos (name, age, ra, cpf) são obrigatórios.
+    InternalError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Erro interno ao processar a requisição.
+              details:
+                type: string
+                example: Mensagem de erro detalhada do servidor.
