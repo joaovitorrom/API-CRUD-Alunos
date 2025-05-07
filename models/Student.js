@@ -2,10 +2,24 @@ const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 
 const studentSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    age: { type: Number, required: true },
-    ra: { type: String, required: true, unique: true },
-    cpf: { type: String, required: true, unique: true },
+    name: { 
+        type: String, 
+        required: true 
+    },
+    age: { 
+        type: Number, 
+        required: true 
+    },
+    ra: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
+    cpf: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
     createdAt: {
         type: String,
         default: () => dayjs().format('DD/MM/YYYY HH:mm:ss')

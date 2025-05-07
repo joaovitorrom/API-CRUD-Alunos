@@ -8,12 +8,7 @@ const path = require('path');
 
 const app = express();
 
-// Midleware para ler urlencoded e JSON
-app.use(
-    express.urlencoded({
-        extended: true,
-    }),
-);
+// Midleware para ler JSON
 app.use(express.json());
 
 // Rotas da API

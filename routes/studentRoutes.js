@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
             message: "Aluno cadastrado com sucesso!",
             data: newStudent
         });
-    } catch (err) {
+    } 
+    catch (err) {
         // Tratamento de erro caso haja tentativa de criar ra e cpf já existentes no BD
         if (err.code === 11000) {
             const field = Object.keys(err.keyValue);
@@ -47,7 +48,8 @@ router.get('/', async (req, res) => {
             data: students,
             count: students.length
         });
-    } catch (err) {
+    } 
+    catch (err) {
         res.status(500).json({ error: 'Erro interno ao buscar alunos.', details: err.message });       
     }
 })
@@ -127,7 +129,8 @@ router.delete('/:id', async (req, res) => {
     try {
         await Student.deleteOne({ _id: id });
         res.status(200).json({ message: "Aluno removido com sucesso."});
-    } catch(err) {
+    } 
+    catch(err) {
         res.status(500).json({ error: 'Erro interno ao remover aluno.', details: err.message });
     }
 })
